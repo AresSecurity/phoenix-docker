@@ -1,0 +1,42 @@
+phoenix-nats:
+  image: nats
+  container_name: phoenix-nats
+  ports:
+  - 4222:4222
+  - 6222:6222
+  - 8222:8222
+sample-app:
+  build: "../sample-app"
+  dockerfile: Dockerfile-dev
+  container_name: sample-app
+  ports:
+  - 5860:5860
+  volumes:
+  - "../sample-app:/sample-app"
+  working_dir: "/sample-app"
+  links:
+  - phoenix-nats
+auth-app:
+  build: "../auth-app"
+  dockerfile: Dockerfile-dev
+  container_name: auth-app
+  ports:
+  - 5862:5862
+  volumes:
+  - "../auth-app:/auth-app"
+  working_dir: "/auth-app"
+  links:
+  - phoenix-nats
+app-gateway:
+  build: "../app-gateway"
+  dockerfile: Dockerfile-dev
+  container_name: app-gateway
+  ports:
+  - 3333:3333
+  - 5861:5861
+  volumes:
+  - "../app-gateway:/app-gateway"
+  working_dir: "/app-gateway"
+  links:
+  - phoenix-nats
+
