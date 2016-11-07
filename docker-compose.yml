@@ -39,4 +39,25 @@ app-gateway:
   working_dir: "/app-gateway"
   links:
   - phoenix-nats
-
+cb-core:
+  build: "../cb-core"
+  dockerfile: Dockerfile-dev
+  container_name: cb-core
+  ports:
+  - 5863:5863
+  volumes:
+  - "../cb-core:/cb-core"
+  working_dir: "/cb-core"
+  links:
+  - phoenix-nats
+cb-settings:
+  build: "../cb-settings"
+  dockerfile: Dockerfile-dev
+  container_name: cb-settings
+  ports:
+  - 5864:5864
+  volumes:
+  - "../cb-settings:/cb-settings"
+  working_dir: "/cb-settings"
+  links:
+  - phoenix-nats
