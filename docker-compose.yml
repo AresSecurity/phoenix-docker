@@ -1,42 +1,61 @@
-phoenix-nats:
-  image: nats
-  container_name: phoenix-nats
-  ports:
-  - 4222:4222
-  - 6222:6222
-  - 8222:8222
-sample-app:
-  build: "../sample-app"
-  dockerfile: Dockerfile-dev
-  container_name: sample-app
-  ports:
-  - 5860:5860
-  volumes:
-  - "../sample-app:/sample-app"
-  working_dir: "/sample-app"
-  links:
-  - phoenix-nats
-auth-app:
-  build: "../auth-app"
-  dockerfile: Dockerfile-dev
-  container_name: auth-app
-  ports:
-  - 5862:5862
-  volumes:
-  - "../auth-app:/auth-app"
-  working_dir: "/auth-app"
-  links:
-  - phoenix-nats
-app-gateway:
-  build: "../app-gateway"
-  dockerfile: Dockerfile-dev
-  container_name: app-gateway
-  ports:
-  - 3333:3333
-  - 5861:5861
-  volumes:
-  - "../app-gateway:/app-gateway"
-  working_dir: "/app-gateway"
-  links:
-  - phoenix-nats
+version: '2'
 
+services:
+  phoenix-rethinkdb:
+    image: rethinkdb:2.3.5
+    ports:
+    - 8080:8080
+    - 28015:28015
+    - 29015:29015
+    volumes:
+    - "./rethinkdb-data:/data"
+
+  phoenix-nats:
+    image: nats
+    container_name: phoenix-nats
+    ports:
+    - 4222:4222
+    - 6222:6222
+    - 8222:8222
+
+  entity-store:
+    build: 
+      context: "../entity-store"
+      dockerfile: Dockerfile-dev
+    ports:
+    - 5870:5870
+    volumes:
+    - "../entity-store:/entity-store"
+    working_dir: "/entity-store"
+
+  sample-app:
+    build: 
+      context: "../sample-app"
+      dockerfile: Dockerfile-dev
+    ports:
+    - 5860:5860
+    volumes:
+    - "../sample-app:/sample-app"
+    working_dir: "/sample-app"
+
+  auth-app:
+    build: 
+      context: "../auth-app"
+      dockerfile: Dockerfile-dev
+    ports:
+    - 5862:5862
+    volumes:
+    - "../auth-app:/auth-app"
+    working_dir: "/auth-app"
+
+  app-gateway:
+    build: 
+      context: "../app-gateway"
+      dockerfile: Dockerfile-dev
+    ports:
+    - 3333:3333
+    - 5861:5861
+    volumes:
+    - "../app-gateway:/app-gateway"
+    working_dir: "/app-gateway"
+  
